@@ -1,0 +1,7 @@
+# Ignore files
+bin/
+gen/
+libs/
+.project
+.classpath
+.settings/
