@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">PocketChanger</string>
+    <string name="action_settings">Settings</string>
+    <string name="in_pocket">In Pocket</string>
+    <string name="out_pocket">Out of Pocket</string>
+    <string name="dont_care">Don\'t care</string>
+    <string name="ringer_label">Ringer</string>
+    <string name="notification_label">Notifications</string>
+    <string name="on">ON</string>
+    <string name="off">OFF</string>
+
+</resources>
