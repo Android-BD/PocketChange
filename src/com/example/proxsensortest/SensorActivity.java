@@ -2,6 +2,10 @@ package com.example.proxsensortest;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -9,6 +13,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -29,7 +36,7 @@ import android.widget.TextView;
  * @
  *
  */
-public class SensorActivity extends Activity implements SensorEventListener {
+public class SensorActivity extends Activity implements SensorEventListener{
 	// Layout containers
 	private LinearLayout linLayMainContainer;
 	private RelativeLayout relLayRinger;
@@ -63,6 +70,13 @@ public class SensorActivity extends Activity implements SensorEventListener {
 
 	// Audio variables
 	private AudioManager audioManager;
+	
+	// Phone call variables
+	private TelephonyManager teleManager;
+	
+	// Notification variables
+	private NotificationListener notiListener;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +89,21 @@ public class SensorActivity extends Activity implements SensorEventListener {
 		// Sensor setup
 		sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 		sensor = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+		
+		// Phone call setup
+		teleManager = (TelephonyManager)getSystemService(TELEPHONY_SERVICE);
+		teleManager.listen(new PhoneStateListener() {
+			@Override
+			public void onCallStateChanged(int state, String number)
+			{
+				registerSensorListener();
+			}
+		}, PhoneStateListener.LISTEN_CALL_STATE);
+		
+		// Notification setup
+		Intent i = new Intent(this, NotificationListener.class);
+		startService(i);
+
 
 	}
 
@@ -114,6 +143,14 @@ public class SensorActivity extends Activity implements SensorEventListener {
 						AudioManager.FLAG_VIBRATE);
 		}
 
+	}
+	
+	
+	public void registerSensorListener()
+	{
+		sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_FASTEST);
+		Log.i(this.getClass().getSimpleName(), "Prox sensor registered");
+		sensorManager.unregisterListener(this);
 	}
 
 	private void additionalUISetup()
